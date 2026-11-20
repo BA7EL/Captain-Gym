@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captain Gym-كابتن جيم</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&family=Noto+Sans+SC:wght@400;700;900&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0b0b0b;
+            --card-bg: #141414;
+            --text-color: #ffffff;
+            --muted-text: #b8b8b8;
+            --primary-red: #8b0000;
+            --accent-red: #ff1a1a;
+            --border-color: #252525;
+            --nav-bg: rgba(11, 11, 11, 0.94);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f4f4f4;
+            --card-bg: #ffffff;
+            --text-color: #181818;
+            --muted-text: #4d4d4d;
+            --primary-red: #b30000;
+            --accent-red: #e60000;
+            --border-color: #dcdcdc;
+            --nav-bg: rgba(244, 244, 244, 0.94);
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Noto Sans SC', 'Noto Sans JP', system-ui, -apple-system, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* تنسيق موحد لأيقونات SVG المدمجة */
+        .ico {
+            width: 1.15em;
+            height: 1.15em;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.1;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .ico-fill {
+            fill: currentColor;
+            stroke: none;
+        }
+
+        /* شاشة البداية */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 20px;
+            text-align: center;
+            animation: fadeOutSplash 0.8s ease 2.6s forwards;
+        }
+
+        .splash-badge {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(255, 26, 26, 0.14);
+            border: 1px solid rgba(255, 26, 26, 0.45);
+            color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 14px;
+        }
+
+        #splash-screen h1 {
+            font-size: clamp(2.2rem, 8vw, 4.2rem);
+            font-weight: 900;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: splashGlow 1.5s infinite alternate;
+        }
+
+        #splash-screen p {
+            color: #aaa;
+            margin-top: 8px;
+            font-size: clamp(0.95rem, 3vw, 1.2rem);
+        }
+
+        @keyframes splashGlow {
+            0% { color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.4); }
+            100% { color: var(--accent-red); text-shadow: 0 0 30px var(--accent-red); }
+        }
+
+        @keyframes fadeOutSplash {
+            to {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+        }
+
+        /* شريط التنقل */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 4%;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            gap: 10px;
+        }
+
+        .logo {
+            font-size: clamp(1.15rem, 2.8vw, 1.6rem);
+            font-weight: 900;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-decoration: none;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.94rem;
+            position: relative;
+            transition: color 0.25s ease;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-links a .ico {
+            color: var(--accent-red);
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            inset-inline-start: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-red);
+            transition: width 0.25s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-red);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .lang-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .lang-wrapper .ico {
+            position: absolute;
+            inset-inline-start: 11px;
+            color: var(--accent-red);
+            pointer-events: none;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .lang-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding-block: 7px;
+            padding-inline: 32px 24px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.86rem;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.25s ease;
+        }
+
+        .lang-select:hover,
+        .lang-select:focus {
+            border-color: var(--accent-red);
+        }
+
+        .btn-control {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+        }
+
+        .btn-control .ico {
+            color: var(--accent-red);
+            width: 1.15rem;
+            height: 1.15rem;
+        }
+
+        .btn-control:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-1px);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* واجهة البداية */
+        .hero {
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(139, 0, 0, 0.32) 0%, var(--bg-color) 72%);
+            padding: 105px 20px 60px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 9vw, 5.2rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 3;
+            animation: textGlow 2s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { color: var(--text-color); text-shadow: 0 0 10px rgba(255, 26, 26, 0.25); }
+            50% { color: var(--accent-red); text-shadow: 0 0 24px rgba(255, 26, 26, 0.55); }
+            100% { color: var(--text-color); text-shadow: 0 0 14px rgba(255, 26, 26, 0.35); }
+        }
+
+        .lightning-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.75);
+            mix-blend-mode: overlay;
+            transition: opacity 0.06s ease;
+        }
+
+        .hero p {
+            font-size: clamp(1.02rem, 3vw, 1.42rem);
+            margin-top: 14px;
+            color: var(--muted-text);
+            max-width: 780px;
+            z-index: 3;
+        }
+
+        .hero-badges {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            z-index: 3;
+        }
+
+        .hero-badges span {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero-badges span .ico {
+            color: var(--accent-red);
+        }
+
+        .hero-cta {
+            margin-top: 28px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 3;
+        }
+
+        .btn-primary, .btn-outline {
+            padding: 12px 26px;
+            border-radius: 30px;
+            font-weight: 800;
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+        }
+
+        .btn-primary {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-red);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-2px);
+        }
+
+        /* العناوين العامة */
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 5vw, 2.85rem);
+            margin-bottom: 44px;
+            font-weight: 900;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 76px;
+            height: 4px;
+            border-radius: 4px;
+            background: var(--accent-red);
+        }
+
+        /* قسم من نحن */
+        .about-section {
+            padding: clamp(65px, 9vw, 100px) 5%;
+            text-align: center;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .about-container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .about-container p {
+            font-size: clamp(1rem, 2.3vw, 1.2rem);
+            line-height: 2;
+            color: var(--muted-text);
+            margin-bottom: 18px;
+        }
+
+        .features-strip {
+            margin-top: 36px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+        }
+
+        .feature-pill {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            transition: border-color 0.25s ease, transform 0.25s ease;
+        }
+
+        .feature-pill:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-4px);
+        }
+
+        .feature-pill .ico {
+            width: 1.8rem;
+            height: 1.8rem;
+            color: var(--accent-red);
+        }
+
+        .feature-pill span {
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+        /* قسم البرامج والأنشطة التدريبية */
+        .programs-section {
+            padding: clamp(65px, 9vw, 100px) 5%;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .program-filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 34px;
+        }
+
+        .filter-btn {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .program-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .program-card.hidden {
+            display: none;
+        }
+
+        .program-card:hover {
+            transform: translateY(-7px);
+            border-color: var(--accent-red);
+        }
+
+        .program-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: rgba(255, 26, 26, 0.12);
+            color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+        }
+
+        .program-icon .ico {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .program-card h3 {
+            font-size: 1.28rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .program-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--accent-red);
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+        }
+
+        .program-card p {
+            color: var(--muted-text);
+            font-size: 0.96rem;
+            line-height: 1.75;
+        }
+
+        /* قسم أسعار الباقات */
+        .pricing-section {
+            padding: clamp(65px, 9vw, 100px) 5%;
+            background: var(--card-bg);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+            max-width: 1140px;
+            margin: 0 auto;
+            align-items: stretch;
+        }
+
+        .price-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 36px 26px;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .price-card.featured {
+            border: 2px solid var(--accent-red);
+        }
+
+        .badge-popular {
+            position: absolute;
+            top: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-red);
+            color: #fff;
+            font-size: 0.82rem;
+            font-weight: 800;
+            padding: 3px 14px;
+            border-radius: 20px;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .price-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .price-card h3 {
+            font-size: clamp(1.32rem, 2.5vw, 1.68rem);
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+
+        .price-card .price {
+            font-size: clamp(1.9rem, 4vw, 2.55rem);
+            font-weight: 900;
+            color: var(--accent-red);
+            margin-bottom: 22px;
+        }
+
+        .price-card .price span {
+            font-size: 0.92rem;
+            color: var(--muted-text);
+            font-weight: 600;
+        }
+
+        .price-card ul {
+            list-style: none;
+            margin-bottom: 28px;
+            text-align: start;
+        }
+
+        .price-card ul li {
+            padding: 11px 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--muted-text);
+            font-size: 0.98rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .price-card ul li .ico-check {
+            color: var(--accent-red);
+        }
+
+        .price-card ul li.disabled-feature,
+        .price-card ul li.disabled-feature .ico {
+            color: #777;
+            opacity: 0.75;
+        }
+
+        .subscribe-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px;
+            background: var(--accent-red);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            transition: background 0.25s ease;
+        }
+
+        .subscribe-btn:hover {
+            background: var(--primary-red);
+        }
+
+        /* معرض الصور */
+        .gallery-section {
+            padding: clamp(65px, 9vw, 100px) 5%;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+            display: block;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-zoom-badge {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-zoom-badge .ico {
+            width: 1.8rem;
+            height: 1.8rem;
+        }
+
+        .gallery-item:hover .gallery-zoom-badge {
+            opacity: 1;
+        }
+
+        /* نافذة تكبير الصورة */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 82vh;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            object-fit: contain;
+        }
+
+        .lightbox-close, .lightbox-nav {
+            position: fixed;
+            background: rgba(25, 25, 25, 0.85);
+            color: #fff;
+            border: 1px solid #444;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-close {
+            top: 22px;
+            right: 22px;
+        }
+
+        .lightbox-nav.prev {
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .lightbox-nav.next {
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* قسم التعليقات */
+        .reviews-section {
+            padding: clamp(65px, 9vw, 100px) 5%;
+            background: var(--card-bg);
+        }
+
+        .review-form-container {
+            max-width: 720px;
+            margin: 0 auto 50px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: clamp(22px, 5vw, 40px);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .review-form-container h3 {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            margin-bottom: 22px;
+            color: var(--text-color);
+            font-weight: 800;
+        }
+
+        .review-form-container h3 span {
+            color: var(--accent-red);
+        }
+
+        .reviews-form {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .reviews-form input,
+        .reviews-form textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            outline: none;
+            resize: vertical;
+        }
+
+        .reviews-form input:focus,
+        .reviews-form textarea:focus {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(255, 26, 26, 0.15);
+        }
+
+        .reviews-form button {
+            padding: 14px;
+            background: var(--accent-red);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: background 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .reviews-form button:hover {
+            background: var(--primary-red);
+        }
+
+        .reviews-slider-wrapper {
+            max-width: 960px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reviews-grid-dual {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+            width: 100%;
+        }
+
+        .review-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            min-height: 155px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: start;
+        }
+
+        .review-card h4 {
+            color: var(--accent-red);
+            margin-bottom: 10px;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .review-card p {
+            color: var(--muted-text);
+            font-size: 1rem;
+            line-height: 1.65;
+        }
+
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.25s ease;
+        }
+
+        .slider-arrow:hover {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+        }
+
+        .slider-arrow.prev {
+            left: -52px;
+        }
+
+        .slider-arrow.next {
+            right: -52px;
+        }
+
+        /* قسم التواصل */
+        .contact-section {
+            padding: clamp(60px, 8vw, 85px) 5%;
+            text-align: center;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .contact-section h2 {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 900;
+        }
+
+        .contact-meta {
+            margin-top: 14px;
+            color: var(--muted-text);
+            font-size: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .contact-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .contact-meta span .ico {
+            color: var(--accent-red);
+        }
+
+        .contact-btns {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 30px;
+            font-size: 1.08rem;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 50px;
+            color: #fff;
+            box-shadow: var(--shadow);
+            transition: transform 0.25s ease;
+        }
+
+        .contact-btn .ico {
+            width: 1.35rem;
+            height: 1.35rem;
+        }
+
+        .contact-btn.phone {
+            background: #141414;
+            border: 2px solid var(--accent-red);
+        }
+
+        .contact-btn.whatsapp {
+            background: #25d366;
+        }
+
+        .contact-btn:hover {
+            transform: translateY(-4px);
+        }
+
+        /* الفوتر */
+        footer {
+            text-align: center;
+            padding: 28px 20px;
+            background: var(--card-bg);
+            font-size: 0.95rem;
+            color: var(--muted-text);
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer p + p {
+            margin-top: 6px;
+            font-size: 0.88rem;
+        }
+
+        footer a {
+            color: var(--accent-red);
+            text-decoration: none;
+            font-weight: 800;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* استجابة الشاشات المتوسطة والصغيرة */
+        @media (max-width: 1080px) {
+            .slider-arrow.prev { left: 8px; }
+            .slider-arrow.next { right: 8px; }
+        }
+
+        @media (max-width: 920px) {
+            .menu-toggle {
+                display: inline-flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 65px;
+                left: 0;
+                right: 0;
+                background: var(--nav-bg);
+                backdrop-filter: blur(14px);
+                flex-direction: column;
+                gap: 0;
+                border-bottom: 1px solid var(--border-color);
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.35s ease;
+            }
+
+            .nav-links.open {
+                max-height: 380px;
+            }
+
+            .nav-links li {
+                width: 100%;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .nav-links a {
+                display: flex;
+                padding: 14px 5%;
+                width: 100%;
+            }
+
+            .lang-select {
+                padding-inline: 28px 18px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .reviews-grid-dual {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- تعريف أيقونات SVG المدمجة (تعمل بدون إنترنت أو مكتبات خارجية) -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+        <symbol id="i-dumbbell" viewBox="0 0 24 24">
+            <path d="M6.5 6.5v11M17.5 6.5v11M3 8.5v7M21 8.5v7M6.5 12h11"/>
+        </symbol>
+        <symbol id="i-info" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>
+        </symbol>
+        <symbol id="i-fist" viewBox="0 0 24 24">
+            <path d="M6 11V7a2 2 0 0 1 4 0v3M10 7V6a2 2 0 0 1 4 0v4M14 7a2 2 0 0 1 4 0v5a6 6 0 0 1-6 6H9a5 5 0 0 1-5-5v-2a2 2 0 0 1 4 0"/>
+        </symbol>
+        <symbol id="i-tag" viewBox="0 0 24 24">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5"/>
+        </symbol>
+        <symbol id="i-image" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 15l-5-5L5 20"/>
+        </symbol>
+        <symbol id="i-chat" viewBox="0 0 24 24">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </symbol>
+        <symbol id="i-phone" viewBox="0 0 24 24">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </symbol>
+        <symbol id="i-whatsapp" viewBox="0 0 24 24">
+            <path class="ico-fill" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.5.08-1.13.11-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3s.75-2.13 1.01-2.42c.27-.29.58-.36.78-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2.01.89 2.15.07.15.12.32.02.51-.1.19-.15.32-.29.49-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.35 1.45.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.66-.15.27.1 1.7.8 1.99.95.29.14.48.22.55.34.07.12.07.7-.17 1.38z"/>
+        </symbol>
+        <symbol id="i-globe" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18"/>
+        </symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </symbol>
+        <symbol id="i-venus" viewBox="0 0 24 24">
+            <circle cx="12" cy="9" r="5"/><path d="M12 14v7M9 18h6"/>
+        </symbol>
+        <symbol id="i-bolt" viewBox="0 0 24 24">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </symbol>
+        <symbol id="i-fire" viewBox="0 0 24 24">
+            <path d="M12 2c.5 4-2 6-2 9a4 4 0 0 0 8 0c0-2-1-3.5-2-5 3 1.5 5 4.5 5 8a9 9 0 0 1-18 0c0-5 4-9 9-12z"/>
+        </symbol>
+        <symbol id="i-user-check" viewBox="0 0 24 24">
+            <circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M16 11l2 2 4-4"/>
+        </symbol>
+        <symbol id="i-users" viewBox="0 0 24 24">
+            <circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M16 3.13a4 4 0 0 1 0 7.75M22 21v-2a4 4 0 0 0-3-3.87"/>
+        </symbol>
+        <symbol id="i-sparkles" viewBox="0 0 24 24">
+            <path d="M12 3l1.8 4.2L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.8L12 3zM5 16l.9 2.1L8 19l-2.1.9L5 22l-.9-2.1L2 19l2.1-.9L5 16zM19 14l.9 2.1L22 17l-2.1.9L19 20l-.9-2.1L16 17l2.1-.9L19 14z"/>
+        </symbol>
+        <symbol id="i-layers" viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 12l10 5 10-5M2 17l10 5 10-5"/>
+        </symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </symbol>
+        <symbol id="i-crown" viewBox="0 0 24 24">
+            <path d="M2 18h20l-2-11-5 4-3-6-3 6-5-4-2 11z"/>
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"/>
+        </symbol>
+        <symbol id="i-xmark" viewBox="0 0 24 24">
+            <path d="M18 6L6 18M6 6l12 12"/>
+        </symbol>
+        <symbol id="i-zoom" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/>
+        </symbol>
+        <symbol id="i-send" viewBox="0 0 24 24">
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+        </symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
+        </symbol>
+        <symbol id="i-chev-right" viewBox="0 0 24 24">
+            <path d="M9 18l6-6-6-6"/>
+        </symbol>
+        <symbol id="i-chev-left" viewBox="0 0 24 24">
+            <path d="M15 18l-6-6 6-6"/>
+        </symbol>
+    </svg>
+
+    <!-- شاشة البداية -->
+    <div id="splash-screen">
+        <div class="splash-badge"><svg class="ico" style="width:2rem;height:2rem;"><use href="#i-dumbbell"/></svg></div>
+        <h1>Captain Gym</h1>
+        <p id="splashTagline">قوة • انضباط • استمرارية</p>
+    </div>
+
+    <!-- الهيدر -->
+    <header>
+        <a href="#" class="logo">
+            <svg class="ico"><use href="#i-dumbbell"/></svg>
+            <span>Captain Gym</span>
+        </a>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#about" onclick="closeMenu()"><svg class="ico"><use href="#i-info"/></svg> <span id="navAbout">من نحن</span></a></li>
+            <li><a href="#programs" onclick="closeMenu()"><svg class="ico"><use href="#i-fist"/></svg> <span id="navPrograms">البرامج</span></a></li>
+            <li><a href="#pricing" onclick="closeMenu()"><svg class="ico"><use href="#i-tag"/></svg> <span id="navPricing">الباقات</span></a></li>
+            <li><a href="#gallery" onclick="closeMenu()"><svg class="ico"><use href="#i-image"/></svg> <span id="navGallery">الصور</span></a></li>
+            <li><a href="#reviews" onclick="closeMenu()"><svg class="ico"><use href="#i-chat"/></svg> <span id="navReviews">الآراء</span></a></li>
+            <li><a href="#contact" onclick="closeMenu()"><svg class="ico"><use href="#i-phone"/></svg> <span id="navContact">تواصل معنا</span></a></li>
+        </ul>
+
+        <div class="controls">
+            <div class="lang-wrapper">
+                <svg class="ico"><use href="#i-globe"/></svg>
+                <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)" aria-label="Select Language">
+                    <option value="ar">العربية</option>
+                    <option value="en">English</option>
+                    <option value="zh">中文 (الصينية)</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="es">Español</option>
+                    <option value="it">Italiano</option>
+                    <option value="tr">Türkçe</option>
+                    <option value="ru">Русский</option>
+                    <option value="ja">日本語</option>
+                </select>
+            </div>
+            <button class="btn-control" id="themeToggleBtn" onclick="toggleTheme()" aria-label="Toggle Theme">
+                <svg class="ico" id="themeSvg"><use id="themeUse" href="#i-sun"/></svg>
+            </button>
+            <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()" aria-label="Toggle Menu">
+                <svg class="ico"><use href="#i-menu"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- واجهة البداية -->
+    <section class="hero">
+        <div class="lightning-overlay" id="lightning"></div>
+        <h1 id="heroTitle">Captain Gym</h1>
+        <p id="heroSubtitle">طريقك نحو أفضل نسخة من نفسك — جيم متكامل، ألعاب قتالية، وفترات خاصة للسيدات</p>
+
+        <div class="hero-badges">
+            <span><svg class="ico"><use href="#i-dumbbell"/></svg> <b id="hb1">تضخيم وكارديو</b></span>
+            <span><svg class="ico"><use href="#i-fist"/></svg> <b id="hb2">كيك بوكس وكونغ فو</b></span>
+            <span><svg class="ico"><use href="#i-shield"/></svg> <b id="hb3">MMA للكبار</b></span>
+            <span><svg class="ico"><use href="#i-venus"/></svg> <b id="hb4">فترات خاصة للبنات</b></span>
+        </div>
+
+        <div class="hero-cta">
+            <a href="#pricing" class="btn-primary">
+                <svg class="ico"><use href="#i-bolt"/></svg> <span id="heroBtnStart">اختر باقتك الآن</span>
+            </a>
+            <a href="#programs" class="btn-outline">
+                <svg class="ico"><use href="#i-fire"/></svg> <span id="heroBtnMore">استكشف الأنشطة</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- قسم من نحن -->
+    <section class="about-section" id="about">
+        <div class="about-container">
+            <h2 class="section-title" id="aboutMainTitle">لماذا تختار Captain Gym؟</h2>
+            <p id="aboutText1">نحن لا نقتصر على اشتراكك معنا فقط، بل يتواجد معك كابتن أثناء التمرين ليساعدك على تصحيح أدائك، تطوير مستواك، وتحقيق هدفك بأمان واحترافية.</p>
+            <p id="aboutText2">سواء كان هدفك بناء العضلات أو حرق الدهون، نوفر لك تدريبات كيك بوكس وكونغ فو لجميع الأعمار (بنين وبنات)، وتدريبات MMA للكبار، بالإضافة إلى فترات مخصصة للسيدات والبنات في مكان نظيف ومنظم بتعامل راقٍ ومحترم لراحة كل مشترك.</p>
+
+            <div class="features-strip">
+                <div class="feature-pill">
+                    <svg class="ico"><use href="#i-user-check"/></svg>
+                    <span id="feat1">متابعة كابتن أثناء التمرين</span>
+                </div>
+                <div class="feature-pill">
+                    <svg class="ico"><use href="#i-users"/></svg>
+                    <span id="feat2">بنين وبنات ولكل الأعمار</span>
+                </div>
+                <div class="feature-pill">
+                    <svg class="ico"><use href="#i-venus"/></svg>
+                    <span id="feat3">خصوصية تامة للسيدات</span>
+                </div>
+                <div class="feature-pill">
+                    <svg class="ico"><use href="#i-sparkles"/></svg>
+                    <span id="feat4">نظافة وتعامل راقٍ</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم البرامج والأنشطة التدريبية -->
+    <section class="programs-section" id="programs">
+        <h2 class="section-title" id="programsTitle">برامجنا وأنشطتنا التدريبية</h2>
+
+        <div class="program-filters">
+            <button class="filter-btn active" data-filter="all" onclick="filterPrograms('all', this)">
+                <svg class="ico"><use href="#i-layers"/></svg> <span id="filterAll">الكل</span>
+            </button>
+            <button class="filter-btn" data-filter="gym" onclick="filterPrograms('gym', this)">
+                <svg class="ico"><use href="#i-dumbbell"/></svg> <span id="filterGym">الجيم واللياقة</span>
+            </button>
+            <button class="filter-btn" data-filter="combat" onclick="filterPrograms('combat', this)">
+                <svg class="ico"><use href="#i-fist"/></svg> <span id="filterCombat">الألعاب القتالية</span>
+            </button>
+            <button class="filter-btn" data-filter="ladies" onclick="filterPrograms('ladies', this)">
+                <svg class="ico"><use href="#i-venus"/></svg> <span id="filterLadies">فترة البنات</span>
+            </button>
+        </div>
+
+        <div class="programs-grid">
+            <div class="program-card" data-category="gym">
+                <div>
+                    <div class="program-icon"><svg class="ico"><use href="#i-dumbbell"/></svg></div>
+                    <h3 id="prog1Title">جيم تضخيم وكارديو</h3>
+                    <span class="program-tag"><svg class="ico"><use href="#i-bolt"/></svg> <span id="prog1Tag">بناء عضلات وحرق دهون</span></span>
+                    <p id="prog1Desc">صالة أجهزة متكاملة لتمارين الحديد والتضخيم وأجهزة الكارديو، مع متابعة مستمرة من الكابتن داخل الصالة لتحقيق أفضل نتيجة.</p>
+                </div>
+            </div>
+
+            <div class="program-card" data-category="combat">
+                <div>
+                    <div class="program-icon"><svg class="ico"><use href="#i-fist"/></svg></div>
+                    <h3 id="prog2Title">كيك بوكس وكونغ فو</h3>
+                    <span class="program-tag"><svg class="ico"><use href="#i-users"/></svg> <span id="prog2Tag">لجميع الأعمار • بنين وبنات</span></span>
+                    <p id="prog2Desc">تدريبات تأسيسية واحترافية لتعليم الدفاع عن النفس، رفع اللياقة البدنية، وزيادة الثقة بالنفس للأطفال والناشئين والشباب.</p>
+                </div>
+            </div>
+
+            <div class="program-card" data-category="combat">
+                <div>
+                    <div class="program-icon"><svg class="ico"><use href="#i-fire"/></svg></div>
+                    <h3 id="prog3Title">فنون القتال المختلطة (MMA)</h3>
+                    <span class="program-tag"><svg class="ico"><use href="#i-shield"/></svg> <span id="prog3Tag">مخصص للكبار</span></span>
+                    <p id="prog3Desc">تدريبات قتالية شاملة تجمع بين القوة البدنية، التحمل، والمهارات القتالية المتنوعة تحت إشراف مدربين متخصصين.</p>
+                </div>
+            </div>
+
+            <div class="program-card" data-category="ladies">
+                <div>
+                    <div class="program-icon"><svg class="ico"><use href="#i-venus"/></svg></div>
+                    <h3 id="prog4Title">فترة خاصة للبنات والسيدات</h3>
+                    <span class="program-tag"><svg class="ico"><use href="#i-heart"/></svg> <span id="prog4Tag">فتنس • أيروبكس • زومبا • أجهزة</span></span>
+                    <p id="prog4Desc">مواعيد مخصصة بالكامل للسيدات والبنات تشمل تمارين الفتنس، الأيروبكس، الزومبا، والتدريب على الأجهزة في جو من الخصوصية والراحة.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم أسعار الباقات -->
+    <section class="pricing-section" id="pricing">
+        <h2 class="section-title" id="pricingTitle">باقات الاشتراكات</h2>
+        <div class="pricing-grid">
+            <!-- الباقة الأولى: تضخيم 300 -->
+            <div class="price-card">
+                <div>
+                    <h3 id="plan1Name">باقة التضخيم</h3>
+                    <div class="price">300 ج <span id="perMonth1">/ شهرياً</span></div>
+                    <ul>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p1f1">دخول الجيم طوال الشهر</span></li>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p1f2">استخدام كامل أجهزة الحديد والتضخيم</span></li>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p1f3">متابعة الكابتن معك أثناء التمرين</span></li>
+                        <li class="disabled-feature"><svg class="ico"><use href="#i-xmark"/></svg> <span id="p1f4">لا تشمل أجهزة الكارديو</span></li>
+                    </ul>
+                </div>
+                <a href="https://wa.me/2001019216306?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%AA%D8%B6%D8%AE%D9%8A%D9%85%20(300%20%D8%AC)" target="_blank" class="subscribe-btn">
+                    <svg class="ico"><use href="#i-whatsapp"/></svg> <span id="btnPlan1">اشترك الآن</span>
+                </a>
+            </div>
+
+            <!-- الباقة الثانية: تضخيم وكارديو 400 -->
+            <div class="price-card featured">
+                <span class="badge-popular"><svg class="ico"><use href="#i-crown"/></svg> <span id="popularBadge">الأكثر طلباً</span></span>
+                <div>
+                    <h3 id="plan2Name">باقة التضخيم والكارديو</h3>
+                    <div class="price">400 ج <span id="perMonth2">/ شهرياً</span></div>
+                    <ul>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p2f1">دخول الجيم طوال الشهر</span></li>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p2f2">استخدام كامل أجهزة التضخيم والحديد</span></li>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p2f3">استخدام أجهزة الكارديو وحرق الدهون</span></li>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p2f4">متابعة الكابتن معك أثناء التمرين</span></li>
+                    </ul>
+                </div>
+                <a href="https://wa.me/2001019216306?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%AA%D8%B6%D8%AE%D9%8A%D9%85%20%D9%88%D8%A7%D9%84%D9%83%D8%A7%D8%B1%D8%AF%D9%8A%D9%88%20(400%20%D8%AC)" target="_blank" class="subscribe-btn">
+                    <svg class="ico"><use href="#i-whatsapp"/></svg> <span id="btnPlan2">اشترك الآن</span>
+                </a>
+            </div>
+
+            <!-- الباقة الثالثة: الألعاب القتالية وفترات السيدات -->
+            <div class="price-card">
+                <div>
+                    <h3 id="plan3Name">الألعاب القتالية وفترات البنات</h3>
+                    <div class="price" id="plan3Price">باقات متنوعة <span id="perQuarter3">/ حسب البرنامج</span></div>
+                    <ul>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p3f1">كيك بوكس وكونغ فو (لجميع الأعمار بنين وبنات)</span></li>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p3f2">تدريب MMA مخصص للكبار</span></li>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p3f3">فترة البنات: فتنس، أيروبكس، زومبا وأجهزة</span></li>
+                        <li><svg class="ico ico-check"><use href="#i-check"/></svg> <span id="p3f4">مواعيد مرنة ومدربون متخصصون</span></li>
+                    </ul>
+                </div>
+                <a href="https://wa.me/2001019216306?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D9%85%D8%B9%D8%B1%D9%81%D8%A9%20%D9%85%D9%88%D8%A7%D8%B9%D9%8A%D8%AF%20%D9%88%D8%A3%D8%B3%D8%B9%D8%A7%D8%B1%20%D8%A7%D9%84%D8%A3%D9%84%D8%B9%D8%A7%D8%A8%20%D8%A7%D9%84%D9%82%D8%AA%D8%A7%D9%84%D9%8A%D8%A9%20%D8%A3%D9%88%20%D9%81%D8%AA%D8%B1%D8%A9%20%D8%A7%D9%84%D8%A8%D9%86%D8%A7%D8%AA" target="_blank" class="subscribe-btn">
+                    <svg class="ico"><use href="#i-whatsapp"/></svg> <span id="btnPlan3">استفسر واشترك الآن</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- معرض الصور -->
+    <section class="gallery-section" id="gallery">
+        <h2 class="section-title" id="galleryTitle">معرض الصور من داخل الجيم</h2>
+        <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+
+    <!-- نافذة تكبير الصور -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Close"><svg class="ico"><use href="#i-xmark"/></svg></button>
+        <button class="lightbox-nav prev" onclick="stepLightbox(-1, event)" aria-label="Previous Image"><svg class="ico"><use href="#i-chev-right"/></svg></button>
+        <img id="lightboxImg" src="" alt="Gym Preview">
+        <button class="lightbox-nav next" onclick="stepLightbox(1, event)" aria-label="Next Image"><svg class="ico"><use href="#i-chev-left"/></svg></button>
+    </div>
+
+    <!-- قسم التعليقات -->
+    <section class="reviews-section" id="reviews">
+        <h2 class="section-title" id="reviewsTitle">آراء وتعليقات العملاء</h2>
+
+        <div class="review-form-container">
+            <h3 id="formQuestion">هل تريد التعليق عن <span>الجيم</span>؟</h3>
+            <div class="reviews-form">
+                <input type="text" id="reviewerName" placeholder="ادخل اسمك الكريم..." required>
+                <textarea id="reviewerComment" rows="3" placeholder="اكتب تجربتك أو رأيك هنا..." required></textarea>
+                <button type="button" onclick="addReview()">
+                    <svg class="ico"><use href="#i-send"/></svg> <span id="submitReviewBtn">إرسال التعليق</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="reviews-slider-wrapper">
+            <button class="slider-arrow prev" onclick="prevReviews()" aria-label="Previous Reviews"><svg class="ico"><use href="#i-chev-right"/></svg></button>
+            <div class="reviews-grid-dual" id="reviewsDualGrid"></div>
+            <button class="slider-arrow next" onclick="nextReviews()" aria-label="Next Reviews"><svg class="ico"><use href="#i-chev-left"/></svg></button>
+        </div>
+    </section>
+
+    <!-- قسم التواصل -->
+    <section class="contact-section" id="contact">
+        <h2 id="contactTitle">تواصل معنا الآن وابدأ رحلتك</h2>
+        <div class="contact-meta">
+            <span><svg class="ico"><use href="#i-clock"/></svg> <span id="hoursInfo">فترات للرجال، فترات مخصصة للسيدات والبنات، وحصص ألعاب قتالية</span></span>
+            <span><svg class="ico"><use href="#i-shield"/></svg> <span id="cleanInfo">بيئة نظيفة ومتابعة مستمرة من الكابتن</span></span>
+        </div>
+        <div class="contact-btns">
+            <a href="tel:01019216306" class="contact-btn phone">
+                <svg class="ico"><use href="#i-phone"/></svg> <span id="callText">اتصل بنا</span>: 01019216306
+            </a>
+            <a href="https://wa.me/2001019216306" target="_blank" class="contact-btn whatsapp">
+                <svg class="ico"><use href="#i-whatsapp"/></svg> <span id="waText">راسلنا واتساب</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- الفوتر -->
+    <footer>
+        <p id="footerText">جميع الحقوق محفوظه 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a></p>
+        <p id="footerSubtext">اضغط علي اسم المطور للتواصل معه</p>
+    </footer>
+
+    <script>
+        // 1. قائمة الموبايل
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('open');
+        }
+
+        function closeMenu() {
+            document.getElementById('navLinks').classList.remove('open');
+        }
+
+        // 2. فلترة البرامج
+        function filterPrograms(category, btnEl) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnEl.classList.add('active');
+
+            document.querySelectorAll('.program-card').forEach(card => {
+                const match = category === 'all' || card.getAttribute('data-category') === category;
+                card.classList.toggle('hidden', !match);
+            });
+        }
+
+        // 3. تأثير البرق الواقعي
+        const lightning = document.getElementById('lightning');
+        function triggerLightning() {
+            const opacityVal = Math.random() > 0.5 ? 0.75 : 0.3;
+            lightning.style.opacity = opacityVal;
+            setTimeout(() => { lightning.style.opacity = 0; }, Math.random() * 140 + 50);
+            if (Math.random() > 0.7) {
+                setTimeout(() => {
+                    lightning.style.opacity = 0.55;
+                    setTimeout(() => { lightning.style.opacity = 0; }, 80);
+                }, 120);
+            }
+            setTimeout(triggerLightning, Math.random() * 4500 + 2200);
+        }
+        setTimeout(triggerLightning, 2000);
+
+        // 4. حقن الـ 13 صورة + نافذة التكبير
+        const gymImages = [
+            "WhatsApp Image 2026-11-10 at 3.29.24 PM.jpeg",
+            "WhatsApp Image 2026-11-10 at 3.29.25 PM (1).jpeg",
+            "WhatsApp Image 2026-11-10 at 3.29.25 PM.jpeg",
+            "WhatsApp Image 2026-11-10 at 3.29.26 PM (1).jpeg",
+            "WhatsApp Image 2026-11-10 at 3.29.26 PM.jpeg",
+            "WhatsApp Image 2026-11-10 at 3.55.18 PM (1).jpeg",
+            "WhatsApp Image 2026-11-10 at 3.55.18 PM (2).jpeg",
+            "WhatsApp Image 2026-11-10 at 3.55.18 PM.jpeg",
+            "WhatsApp Image 2026-11-10 at 3.55.19 PM.jpeg",
+            "WhatsApp Image 2026-11-10 at 3.56.19 PM (1).jpeg",
+            "WhatsApp Image 2026-11-10 at 3.56.19 PM (2).jpeg",
+            "WhatsApp Image 2026-11-10 at 3.56.19 PM.jpeg",
+            "WhatsApp Image 2026-11-10 at 3.56.20 PM.jpeg"
+        ];
+
+        const galleryGrid = document.getElementById('galleryGrid');
+        let activeImageIndex = 0;
+
+        gymImages.forEach((imgUrl, index) => {
+            const item = document.createElement('div');
+            item.className = 'gallery-item';
+            item.onclick = () => openLightbox(index);
+            item.innerHTML = `
+                <img src="${imgUrl}" alt="Gym Equipment ${index + 1}" loading="lazy">
+                <div class="gallery-zoom-badge"><svg class="ico"><use href="#i-zoom"/></svg></div>
+            `;
+            galleryGrid.appendChild(item);
+        });
+
+        function openLightbox(index) {
+            activeImageIndex = index;
+            document.getElementById('lightboxImg').src = gymImages[activeImageIndex];
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        function closeLightbox(event) {
+            if (event.target.id === 'lightbox' || event.target.closest('.lightbox-close')) {
+                document.getElementById('lightbox').classList.remove('active');
+            }
+        }
+
+        function stepLightbox(dir, event) {
+            event.stopPropagation();
+            activeImageIndex = (activeImageIndex + dir + gymImages.length) % gymImages.length;
+            document.getElementById('lightboxImg').src = gymImages[activeImageIndex];
+        }
+
+        // 5. نظام السلايدر والتعليقات الدائمة
+        let currentReviewIndex = 0;
+        let currentLang = 'ar';
+
+        function getSavedReviews() {
+            return JSON.parse(localStorage.getItem('captainGymReviews')) || [
+                { name: "كابتن أحمد", comment: "من أقوى الجيمات اللي تدربت فيها، والأجواء والمتابعة أثناء التمرين ممتازة!" },
+                { name: "محمد إبراهيم", comment: "باقة التضخيم والكارديو بـ 400ج قيمة مقابل سعر ممتازة جداً والأجهزة حديثة ونظيفة." },
+                { name: "سارة محمود", comment: "فترة البنات منظمة جداً وفيها زومبا وأيروبكس وأجهزة بخصوصية واحترام عالي." }
+            ];
+        }
+
+        function renderReviews() {
+            const dualGrid = document.getElementById('reviewsDualGrid');
+            dualGrid.innerHTML = "";
+            const reviews = getSavedReviews();
+            if (reviews.length === 0) return;
+
+            const isMobile = window.innerWidth <= 768;
+            const firstIdx = currentReviewIndex % reviews.length;
+            const displayList = [reviews[firstIdx]];
+
+            if (!isMobile && reviews.length > 1) {
+                const secondIdx = (currentReviewIndex + 1) % reviews.length;
+                displayList.push(reviews[secondIdx]);
+            }
+
+            displayList.forEach(rev => {
+                const card = document.createElement('div');
+                card.className = 'review-card';
+                card.innerHTML = `
+                    <h4><svg class="ico"><use href="#i-shield"/></svg> ${escapeHTML(rev.name)}</h4>
+                    <p>${escapeHTML(rev.comment)}</p>
+                `;
+                dualGrid.appendChild(card);
+            });
+        }
+
+        function escapeHTML(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function nextReviews() {
+            const reviews = getSavedReviews();
+            const step = window.innerWidth <= 768 ? 1 : 2;
+            currentReviewIndex = (currentReviewIndex + step) % reviews.length;
+            renderReviews();
+        }
+
+        function prevReviews() {
+            const reviews = getSavedReviews();
+            const step = window.innerWidth <= 768 ? 1 : 2;
+            currentReviewIndex = (currentReviewIndex - step + reviews.length) % reviews.length;
+            renderReviews();
+        }
+
+        const alertMessages = {
+            ar: "يرجى كتابة الاسم والتعليق أولاً!",
+            en: "Please fill in both name and comment!",
+            zh: "请先填写您的姓名和评论！",
+            fr: "Veuillez saisir votre nom et votre commentaire !",
+            de: "Bitte Namen und Kommentar ausfüllen!",
+            es: "¡Por favor escribe tu nombre y comentario!",
+            it: "Inserisci prima nome e commento!",
+            tr: "Lütfen önce adınızı ve yorumunuzu yazın!",
+            ru: "Пожалуйста, введите имя и комментарий!",
+            ja: "お名前とコメントを入力してください！"
+        };
+
+        function addReview() {
+            const nameInput = document.getElementById('reviewerName');
+            const commentInput = document.getElementById('reviewerComment');
+
+            if (nameInput.value.trim() === "" || commentInput.value.trim() === "") {
+                alert(alertMessages[currentLang] || alertMessages.en);
+                return;
+            }
+
+            const savedReviews = getSavedReviews();
+            savedReviews.unshift({
+                name: nameInput.value.trim(),
+                comment: commentInput.value.trim()
+            });
+
+            localStorage.setItem('captainGymReviews', JSON.stringify(savedReviews));
+            nameInput.value = "";
+            commentInput.value = "";
+            currentReviewIndex = 0;
+            renderReviews();
+        }
+
+        window.addEventListener('resize', renderReviews);
+        window.addEventListener('DOMContentLoaded', () => {
+            renderReviews();
+            updateThemeIcon();
+        });
+
+        // 6. تبديل الوضع الليلي والنهاري وتحديث أيقونة SVG
+        function updateThemeIcon() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const useEl = document.getElementById('themeUse');
+            if (!useEl) return;
+            useEl.setAttribute('href', theme === 'dark' ? '#i-sun' : '#i-moon');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+            updateThemeIcon();
+        }
+
+        // 7. نظام اللغات (10 لغات: عربي، إنجليزي، صيني + 7 لغات إضافية)
+        const translations = {
+            ar: {
+                dir: "rtl",
+                splashTagline: "قوة • انضباط • استمرارية",
+                navAbout: "من نحن", navPrograms: "البرامج", navPricing: "الباقات", navGallery: "الصور", navReviews: "الآراء", navContact: "تواصل معنا",
+                heroSubtitle: "طريقك نحو أفضل نسخة من نفسك — جيم متكامل، ألعاب قتالية، وفترات خاصة للسيدات",
+                hb1: "تضخيم وكارديو", hb2: "كيك بوكس وكونغ فو", hb3: "MMA للكبار", hb4: "فترات خاصة للبنات",
+                heroBtnStart: "اختر باقتك الآن", heroBtnMore: "استكشف الأنشطة",
+                aboutMainTitle: "لماذا تختار Captain Gym؟",
+                aboutText1: "نحن لا نقتصر على اشتراكك معنا فقط، بل يتواجد معك كابتن أثناء التمرين ليساعدك على تصحيح أدائك، تطوير مستواك، وتحقيق هدفك بأمان واحترافية.",
+                aboutText2: "سواء كان هدفك بناء العضلات أو حرق الدهون، نوفر لك تدريبات كيك بوكس وكونغ فو لجميع الأعمار (بنين وبنات)، وتدريبات MMA للكبار، بالإضافة إلى فترات مخصصة للسيدات والبنات في مكان نظيف ومنظم بتعامل راقٍ ومحترم لراحة كل مشترك.",
+                feat1: "متابعة كابتن أثناء التمرين", feat2: "بنين وبنات ولكل الأعمار", feat3: "خصوصية تامة للسيدات", feat4: "نظافة وتعامل راقٍ",
+                programsTitle: "برامجنا وأنشطتنا التدريبية",
+                filterAll: "الكل", filterGym: "الجيم واللياقة", filterCombat: "الألعاب القتالية", filterLadies: "فترة البنات",
+                prog1Title: "جيم تضخيم وكارديو", prog1Tag: "بناء عضلات وحرق دهون", prog1Desc: "صالة أجهزة متكاملة لتمارين الحديد والتضخيم وأجهزة الكارديو، مع متابعة مستمرة من الكابتن داخل الصالة.",
+                prog2Title: "كيك بوكس وكونغ فو", prog2Tag: "لجميع الأعمار • بنين وبنات", prog2Desc: "تدريبات تأسيسية واحترافية لتعليم الدفاع عن النفس، رفع اللياقة البدنية، وزيادة الثقة بالنفس.",
+                prog3Title: "فنون القتال المختلطة (MMA)", prog3Tag: "مخصص للكبار", prog3Desc: "تدريبات قتالية شاملة تجمع بين القوة البدنية، التحمل، والمهارات القتالية المتنوعة تحت إشراف مدربين متخصصين.",
+                prog4Title: "فترة خاصة للبنات والسيدات", prog4Tag: "فتنس • أيروبكس • زومبا • أجهزة", prog4Desc: "مواعيد مخصصة بالكامل للسيدات والبنات تشمل فتنس، أيروبكس، زومبا، وتدريب على الأجهزة بخصوصية تامة.",
+                pricingTitle: "باقات الاشتراكات", popularBadge: "الأكثر طلباً",
+                perMonth1: "/ شهرياً", perMonth2: "/ شهرياً",
+                plan1Name: "باقة التضخيم", p1f1: "دخول الجيم طوال الشهر", p1f2: "استخدام كامل أجهزة الحديد والتضخيم", p1f3: "متابعة الكابتن معك أثناء التمرين", p1f4: "لا تشمل أجهزة الكارديو",
+                plan2Name: "باقة التضخيم والكارديو", p2f1: "دخول الجيم طوال الشهر", p2f2: "استخدام كامل أجهزة التضخيم والحديد", p2f3: "استخدام أجهزة الكارديو وحرق الدهون", p2f4: "متابعة الكابتن معك أثناء التمرين",
+                plan3Name: "الألعاب القتالية وفترات البنات", plan3Price: 'باقات متنوعة <span id="perQuarter3">/ حسب البرنامج</span>',
+                p3f1: "كيك بوكس وكونغ فو (لجميع الأعمار بنين وبنات)", p3f2: "تدريب MMA مخصص للكبار", p3f3: "فترة البنات: فتنس، أيروبكس، زومبا وأجهزة", p3f4: "مواعيد مرنة ومدربون متخصصون",
+                btnPlan1: "اشترك الآن", btnPlan2: "اشترك الآن", btnPlan3: "استفسر واشترك الآن",
+                galleryTitle: "معرض الصور من داخل الجيم", reviewsTitle: "آراء وتعليقات العملاء",
+                formQuestion: "هل تريد التعليق عن <span>الجيم</span>؟",
+                namePlaceholder: "ادخل اسمك الكريم...", commentPlaceholder: "اكتب تجربتك أو رأيك هنا...", submitBtn: "إرسال التعليق",
+                contactTitle: "تواصل معنا الآن وابدأ رحلتك",
+                hoursInfo: "فترات للرجال، فترات مخصصة للسيدات والبنات، وحصص ألعاب قتالية", cleanInfo: "بيئة نظيفة ومتابعة مستمرة من الكابتن",
+                callText: "اتصل بنا", waText: "راسلنا واتساب",
+                footerText: 'جميع الحقوق محفوظه 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "اضغط علي اسم المطور للتواصل معه"
+            },
+            en: {
+                dir: "ltr",
+                splashTagline: "Strength • Discipline • Consistency",
+                navAbout: "About Us", navPrograms: "Programs", navPricing: "Pricing", navGallery: "Gallery", navReviews: "Reviews", navContact: "Contact",
+                heroSubtitle: "Your Pathway to the Best Version of Yourself — Full Gym, Martial Arts & Ladies Hours",
+                hb1: "Bulking & Cardio", hb2: "Kickboxing & Kung Fu", hb3: "MMA for Adults", hb4: "Ladies Hours",
+                heroBtnStart: "Choose Your Plan", heroBtnMore: "Explore Programs",
+                aboutMainTitle: "Why Choose Captain Gym?",
+                aboutText1: "We go beyond just a membership—a coach is with you during your workout to improve your form, elevate your level, and help you reach your goals safely.",
+                aboutText2: "Whether you aim for muscle growth or fat loss, we offer Kickboxing and Kung Fu for all ages (boys & girls), MMA for adults, and dedicated hours for women and girls in a clean, respectful environment.",
+                feat1: "On-Floor Coach Guidance", feat2: "Boys & Girls • All Ages", feat3: "Privacy for Ladies", feat4: "Clean & Respectful Space",
+                programsTitle: "Training Programs & Activities",
+                filterAll: "All", filterGym: "Gym & Fitness", filterCombat: "Martial Arts", filterLadies: "Ladies Hours",
+                prog1Title: "Bulking & Cardio Gym", prog1Tag: "Muscle & Fat Loss", prog1Desc: "Complete weights, bulking, and cardio machines with continuous on-floor coaching.",
+                prog2Title: "Kickboxing & Kung Fu", prog2Tag: "All Ages • Boys & Girls", prog2Desc: "Structured training for self-defense, fitness, and confidence across all ages.",
+                prog3Title: "Mixed Martial Arts (MMA)", prog3Tag: "For Adults", prog3Desc: "Full combat conditioning combining strength, stamina, and fighting techniques with expert coaches.",
+                prog4Title: "Ladies & Girls Private Hours", prog4Tag: "Fitness • Aerobics • Zumba • Machines", prog4Desc: "Dedicated sessions for women and girls including fitness, aerobics, Zumba, and gym machines.",
+                pricingTitle: "Subscription Plans", popularBadge: "Most Popular",
+                perMonth1: "/ month", perMonth2: "/ month",
+                plan1Name: "Bulking Plan", p1f1: "Full monthly gym access", p1f2: "Full use of weights & bulking machines", p1f3: "On-floor coach guidance during workouts", p1f4: "Cardio machines not included",
+                plan2Name: "Bulking & Cardio Plan", p2f1: "Full monthly gym access", p2f2: "Full use of weights & bulking machines", p2f3: "Full access to cardio & fat-burn machines", p2f4: "On-floor coach guidance during workouts",
+                plan3Name: "Martial Arts & Ladies Sessions", plan3Price: 'Flexible Plans <span id="perQuarter3">/ by program</span>',
+                p3f1: "Kickboxing & Kung Fu (All ages • Boys & Girls)", p3f2: "MMA training for adults", p3f3: "Ladies Hours: Fitness, Aerobics, Zumba & Machines", p3f4: "Flexible schedules & specialized coaches",
+                btnPlan1: "Subscribe Now", btnPlan2: "Subscribe Now", btnPlan3: "Inquire & Join Now",
+                galleryTitle: "Inside Captain Gym Gallery", reviewsTitle: "Clients' Reviews",
+                formQuestion: "Want to leave a review about the <span>Gym</span>?",
+                namePlaceholder: "Enter your name...", commentPlaceholder: "Write your experience or feedback here...", submitBtn: "Submit Comment",
+                contactTitle: "Contact Us Now & Start Your Journey",
+                hoursInfo: "Men's sessions, dedicated Ladies hours, and Martial Arts classes", cleanInfo: "Clean space & continuous coaching",
+                callText: "Call Us", waText: "WhatsApp Us",
+                footerText: 'All Rights Reserved 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "Click the developer's name to get in touch"
+            },
+            zh: {
+                dir: "ltr",
+                splashTagline: "力量 • 自律 • 坚持",
+                navAbout: "关于我们", navPrograms: "训练项目", navPricing: "会员套餐", navGallery: "健身图集", navReviews: "学员评价", navContact: "联系我们",
+                heroSubtitle: "迈向更强自我的起点 — 力量与有氧、格斗武术及女士专属时段",
+                hb1: "增肌与有氧", hb2: "自由搏击与功夫", hb3: "成人综合格斗 MMA", hb4: "女士专属时段",
+                heroBtnStart: "立即选择套餐", heroBtnMore: "浏览课程",
+                aboutMainTitle: "为什么选择 Captain Gym？",
+                aboutText1: "我们不仅提供健身场地，训练期间还有教练全程指导，帮助你纠正动作、提升水平并安全达成目标。",
+                aboutText2: "无论你想增肌还是减脂，这里都提供男女全年龄段自由搏击与功夫、成人 MMA，以及环境整洁、礼貌尊重的女士专属健身时段。",
+                feat1: "训练全程教练指导", feat2: "男女全年龄段", feat3: "女士隐私保障", feat4: "整洁舒适环境",
+                programsTitle: "训练项目与课程",
+                filterAll: "全部", filterGym: "健身与体能", filterCombat: "格斗武术", filterLadies: "女士时段",
+                prog1Title: "增肌与有氧健身区", prog1Tag: "增肌塑形 • 燃脂减脂", prog1Desc: "配备齐全的力量器械与有氧设备，教练现场指导训练效果。",
+                prog2Title: "自由搏击与功夫", prog2Tag: "全年龄段 • 男女皆可", prog2Desc: "系统学习防身自卫、体能提升与自信培养，适合各年龄段学员。",
+                prog3Title: "成人综合格斗 (MMA)", prog3Tag: "面向成人", prog3Desc: "融合力量、耐力与多维度格斗技术的综合训练课程。",
+                prog4Title: "女士与女孩专属时段", prog4Tag: "健身 • 有氧操 • 尊巴 • 器械", prog4Desc: "专为女性开设的私密舒适时段，涵盖健身、有氧操、尊巴和器械训练。",
+                pricingTitle: "会员价格方案", popularBadge: "最受欢迎",
+                perMonth1: "/ 月", perMonth2: "/ 月",
+                plan1Name: "增肌套餐", p1f1: "全月进馆训练", p1f2: "畅用力量与增肌器械", p1f3: "训练期间教练现场指导", p1f4: "不含心肺有氧器械",
+                plan2Name: "增肌 + 有氧套餐", p2f1: "全月进馆训练", p2f2: "畅用力量与增肌器械", p2f3: "包含有氧燃脂器械使用", p2f4: "训练期间教练现场指导",
+                plan3Name: "格斗武术与女士课程", plan3Price: '多种方案 <span id="perQuarter3">/ 按课程</span>',
+                p3f1: "自由搏击与功夫（全年龄段•男女）", p3f2: "成人 MMA 格斗训练", p3f3: "女士时段：健身、有氧操、尊巴与器械", p3f4: "时间灵活，专业教练带教",
+                btnPlan1: "立即办理", btnPlan2: "立即办理", btnPlan3: "咨询并加入",
+                galleryTitle: "馆内实拍图集", reviewsTitle: "学员真实评价",
+                formQuestion: "想留下对<span>健身馆</span>的评价吗？",
+                namePlaceholder: "请输入您的姓名...", commentPlaceholder: "写下您的训练体验或建议...", submitBtn: "提交评价",
+                contactTitle: "立即联系我们，开启蜕变之旅",
+                hoursInfo: "设有男士时段、女士专属时段及格斗课程", cleanInfo: "环境整洁，教练持续跟进",
+                callText: "电话咨询", waText: "WhatsApp 联系",
+                footerText: '版权所有 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "点击开发者姓名即可联系"
+            },
+            fr: {
+                dir: "ltr",
+                splashTagline: "Force • Discipline • Constance",
+                navAbout: "À propos", navPrograms: "Programmes", navPricing: "Tarifs", navGallery: "Galerie", navReviews: "Avis", navContact: "Contact",
+                heroSubtitle: "Votre voie vers la meilleure version de vous-même — Musculation, sports de combat et créneaux femmes",
+                hb1: "Prise de masse & Cardio", hb2: "Kickboxing & Kung Fu", hb3: "MMA Adultes", hb4: "Créneaux Femmes",
+                heroBtnStart: "Choisir une formule", heroBtnMore: "Découvrir les activités",
+                aboutMainTitle: "Pourquoi choisir Captain Gym ?",
+                aboutText1: "Nous ne nous limitons pas à un abonnement : un coach est présent pendant votre séance pour corriger vos mouvements et vous aider à atteindre vos objectifs.",
+                aboutText2: "Pour la prise de muscle ou la perte de graisse, nous proposons kickboxing et kung fu pour tous âges (garçons et filles), MMA adultes, et des horaires dédiés aux femmes dans un lieu propre et respectueux.",
+                feat1: "Coaching sur le plateau", feat2: "Filles & Garçons • Tous âges", feat3: "Espace dédié aux femmes", feat4: "Propreté et accueil soigné",
+                programsTitle: "Nos programmes et activités",
+                filterAll: "Tout", filterGym: "Salle & Fitness", filterCombat: "Sports de combat", filterLadies: "Créneaux Femmes",
+                prog1Title: "Salle Prise de Masse & Cardio", prog1Tag: "Muscle & Cardio", prog1Desc: "Équipements complets de musculation et cardio avec accompagnement continu du coach.",
+                prog2Title: "Kickboxing & Kung Fu", prog2Tag: "Tous âges • Garçons & Filles", prog2Desc: "Apprentissage de la self-défense, condition physique et confiance en soi pour tous les âges.",
+                prog3Title: "Arts Martiaux Mixtes (MMA)", prog3Tag: "Pour adultes", prog3Desc: "Entraînement complet alliant force, endurance et techniques de combat encadré par des spécialistes.",
+                prog4Title: "Créneau Spécial Femmes & Filles", prog4Tag: "Fitness • Aérobic • Zumba • Machines", prog4Desc: "Séances dédiées aux femmes incluant fitness, aérobic, zumba et machines dans un cadre confidentiel.",
+                pricingTitle: "Formules d'abonnement", popularBadge: "Plus populaire",
+                perMonth1: "/ mois", perMonth2: "/ mois",
+                plan1Name: "Formule Prise de Masse", p1f1: "Accès à la salle tout le mois", p1f2: "Accès complet aux machines de musculation", p1f3: "Accompagnement d'un coach pendant l'entraînement", p1f4: "Machines cardio non incluses",
+                plan2Name: "Formule Masse & Cardio", p2f1: "Accès à la salle tout le mois", p2f2: "Accès complet aux machines de musculation", p2f3: "Accès aux machines cardio et brûle-graisses", p2f4: "Accompagnement d'un coach pendant l'entraînement",
+                plan3Name: "Combat & Créneaux Femmes", plan3Price: 'Offres variées <span id="perQuarter3">/ selon programme</span>',
+                p3f1: "Kickboxing & Kung Fu (Tous âges • Garçons & Filles)", p3f2: "Entraînement MMA pour adultes", p3f3: "Femmes : Fitness, Aérobic, Zumba & Machines", p3f4: "Horaires flexibles et coachs spécialisés",
+                btnPlan1: "S'abonner", btnPlan2: "S'abonner", btnPlan3: "Demander & S'inscrire",
+                galleryTitle: "Galerie photo du club", reviewsTitle: "Avis des membres",
+                formQuestion: "Voulez-vous laisser un avis sur le <span>Gym</span> ?",
+                namePlaceholder: "Votre nom...", commentPlaceholder: "Partagez votre expérience ou votre avis...", submitBtn: "Envoyer l'avis",
+                contactTitle: "Contactez-nous et commencez dès aujourd'hui",
+                hoursInfo: "Créneaux hommes, créneaux femmes et cours de combat", cleanInfo: "Lieu propre et suivi continu",
+                callText: "Appeler", waText: "WhatsApp",
+                footerText: 'Tous droits réservés 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "Cliquez sur le nom du développeur pour le contacter"
+            },
+            de: {
+                dir: "ltr",
+                splashTagline: "Kraft • Disziplin • Ausdauer",
+                navAbout: "Über uns", navPrograms: "Programme", navPricing: "Preise", navGallery: "Galerie", navReviews: "Bewertungen", navContact: "Kontakt",
+                heroSubtitle: "Dein Weg zur besten Version deiner selbst — Kraft & Cardio, Kampfsport und Frauenzeiten",
+                hb1: "Muskelaufbau & Cardio", hb2: "Kickboxen & Kung Fu", hb3: "MMA für Erwachsene", hb4: "Frauenzeiten",
+                heroBtnStart: "Tarif wählen", heroBtnMore: "Programme ansehen",
+                aboutMainTitle: "Warum Captain Gym?",
+                aboutText1: "Bei uns gibt es mehr als nur eine Mitgliedschaft: Ein Trainer ist während des Trainings für dich da, verbessert deine Technik und hilft dir, deine Ziele sicher zu erreichen.",
+                aboutText2: "Ob Muskelaufbau oder Fettverbrennung – wir bieten Kickboxen und Kung Fu für alle Altersgruppen (Jungen & Mädchen), MMA für Erwachsene sowie spezielle Zeiten für Frauen in sauberer, respektvoller Atmosphäre.",
+                feat1: "Trainerbetreuung vor Ort", feat2: "Jungen & Mädchen • Alle Alter", feat3: "Eigene Zeiten für Frauen", feat4: "Sauberkeit & Respekt",
+                programsTitle: "Trainingsprogramme & Angebote",
+                filterAll: "Alle", filterGym: "Fitness & Kraft", filterCombat: "Kampfsport", filterLadies: "Frauenzeiten",
+                prog1Title: "Muskelaufbau & Cardio", prog1Tag: "Kraft & Ausdauer", prog1Desc: "Kraft- und Cardiogeräte mit fortlaufender Betreuung durch den Trainer auf der Trainingsfläche.",
+                prog2Title: "Kickboxen & Kung Fu", prog2Tag: "Alle Altersgruppen • Jungen & Mädchen", prog2Desc: "Grundlagen- und Aufbautraining für Selbstverteidigung, Fitness und Selbstvertrauen.",
+                prog3Title: "Mixed Martial Arts (MMA)", prog3Tag: "Für Erwachsene", prog3Desc: "Ganzheitliches Kampfsporttraining aus Kraft, Ausdauer und Techniken unter erfahrenen Trainern.",
+                prog4Title: "Exklusive Zeiten für Frauen", prog4Tag: "Fitness • Aerobic • Zumba • Geräte", prog4Desc: "Eigene Trainingszeiten für Frauen und Mädchen mit Fitness, Aerobic, Zumba und Geräten.",
+                pricingTitle: "Mitgliedschaften", popularBadge: "Beliebteste Wahl",
+                perMonth1: "/ Monat", perMonth2: "/ Monat",
+                plan1Name: "Muskelaufbau-Tarif", p1f1: "Zugang zum Studio den ganzen Monat", p1f2: "Nutzung aller Kraft- und Aufbaugeräte", p1f3: "Trainerbetreuung während des Trainings", p1f4: "Ohne Cardiogeräte",
+                plan2Name: "Muskelaufbau & Cardio", p2f1: "Zugang zum Studio den ganzen Monat", p2f2: "Nutzung aller Kraft- und Aufbaugeräte", p2f3: "Inklusive Cardiogeräte & Fettverbrennung", p2f4: "Trainerbetreuung während des Trainings",
+                plan3Name: "Kampfsport & Frauenzeiten", plan3Price: 'Flexible Tarife <span id="perQuarter3">/ je Programm</span>',
+                p3f1: "Kickboxen & Kung Fu (Alle Alter • Jungen & Mädchen)", p3f2: "MMA-Training für Erwachsene", p3f3: "Frauenzeiten: Fitness, Aerobic, Zumba & Geräte", p3f4: "Flexible Zeiten & Fachübungsleiter",
+                btnPlan1: "Jetzt anmelden", btnPlan2: "Jetzt anmelden", btnPlan3: "Anfragen & Starten",
+                galleryTitle: "Einblicke ins Studio", reviewsTitle: "Kundenstimmen",
+                formQuestion: "Möchtest du das <span>Studio</span> bewerten?",
+                namePlaceholder: "Dein Name...", commentPlaceholder: "Schreibe deine Erfahrung oder Meinung...", submitBtn: "Bewertung senden",
+                contactTitle: "Jetzt Kontakt aufnehmen & starten",
+                hoursInfo: "Herrenzeiten, eigene Frauenzeiten & Kampfsportkurse", cleanInfo: "Saubere Umgebung & Betreuung",
+                callText: "Anrufen", waText: "WhatsApp",
+                footerText: 'Alle Rechte vorbehalten 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "Klicke auf den Namen des Entwicklers für Kontakt"
+            },
+            es: {
+                dir: "ltr",
+                splashTagline: "Fuerza • Disciplina • Constancia",
+                navAbout: "Nosotros", navPrograms: "Programas", navPricing: "Planes", navGallery: "Galería", navReviews: "Opiniones", navContact: "Contacto",
+                heroSubtitle: "Tu camino hacia tu mejor versión — Gimnasio, artes marciales y horarios para mujeres",
+                hb1: "Volumen y Cardio", hb2: "Kickboxing y Kung Fu", hb3: "MMA Adultos", hb4: "Horario Mujeres",
+                heroBtnStart: "Elige tu plan", heroBtnMore: "Ver actividades",
+                aboutMainTitle: "¿Por qué elegir Captain Gym?",
+                aboutText1: "No nos limitamos a una membresía: un entrenador te acompaña durante tu rutina para mejorar tu técnica y lograr tus metas de forma segura.",
+                aboutText2: "Ya sea ganar músculo o quemar grasa, ofrecemos kickboxing y kung fu para todas las edades (chicos y chicas), MMA para adultos y horarios exclusivos para mujeres en un espacio limpio y respetuoso.",
+                feat1: "Acompañamiento en sala", feat2: "Chicos y chicas • Todas las edades", feat3: "Espacio para mujeres", feat4: "Limpieza y buen trato",
+                programsTitle: "Programas y actividades",
+                filterAll: "Todos", filterGym: "Gym y Fitness", filterCombat: "Artes marciales", filterLadies: "Horario mujeres",
+                prog1Title: "Gimnasio Volumen y Cardio", prog1Tag: "Músculo y Cardio", prog1Desc: "Máquinas de fuerza, volumen y cardio con seguimiento constante del entrenador.",
+                prog2Title: "Kickboxing y Kung Fu", prog2Tag: "Todas las edades • Chicos y chicas", prog2Desc: "Entrenamiento de defensa personal, condición física y confianza para todas las edades.",
+                prog3Title: "Artes Marciales Mixtas (MMA)", prog3Tag: "Para adultos", prog3Desc: "Preparación física y de combate integral con entrenadores especializados.",
+                prog4Title: "Horario Exclusivo para Mujeres", prog4Tag: "Fitness • Aeróbicos • Zumba • Máquinas", prog4Desc: "Turnos dedicados para mujeres y chicas con fitness, aeróbicos, zumba y máquinas.",
+                pricingTitle: "Planes de suscripción", popularBadge: "Más elegido",
+                perMonth1: "/ mes", perMonth2: "/ mes",
+                plan1Name: "Plan Volumen", p1f1: "Acceso al gimnasio todo el mes", p1f2: "Uso de máquinas de pesas y volumen", p1f3: "Acompañamiento del coach al entrenar", p1f4: "No incluye máquinas de cardio",
+                plan2Name: "Plan Volumen y Cardio", p2f1: "Acceso al gimnasio todo el mes", p2f2: "Uso de máquinas de pesas y volumen", p2f3: "Incluye máquinas de cardio y quema grasa", p2f4: "Acompañamiento del coach al entrenar",
+                plan3Name: "Artes Marciales y Mujeres", plan3Price: 'Planes variados <span id="perQuarter3">/ según programa</span>',
+                p3f1: "Kickboxing y Kung Fu (Todas las edades • Chicos y chicas)", p3f2: "Entrenamiento MMA para adultos", p3f3: "Mujeres: Fitness, Aeróbicos, Zumba y Máquinas", p3f4: "Horarios flexibles y coaches dedicados",
+                btnPlan1: "Suscribirse", btnPlan2: "Suscribirse", btnPlan3: "Consultar y unirse",
+                galleryTitle: "Galería del gimnasio", reviewsTitle: "Opiniones de clientes",
+                formQuestion: "¿Quieres dejar un comentario sobre el <span>Gym</span>?",
+                namePlaceholder: "Tu nombre...", commentPlaceholder: "Escribe tu experiencia u opinión...", submitBtn: "Enviar comentario",
+                contactTitle: "Contáctanos ahora y comienza",
+                hoursInfo: "Turnos hombres, horarios para mujeres y clases de combate", cleanInfo: "Entorno limpio y guía continua",
+                callText: "Llamar", waText: "WhatsApp",
+                footerText: 'Todos los derechos reservados 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "Haz clic en el nombre del desarrollador para contactar"
+            },
+            it: {
+                dir: "ltr",
+                splashTagline: "Forza • Disciplina • Costanza",
+                navAbout: "Chi siamo", navPrograms: "Programmi", navPricing: "Abbonamenti", navGallery: "Galleria", navReviews: "Recensioni", navContact: "Contatti",
+                heroSubtitle: "Il percorso verso la tua versione migliore — Sala pesi, arti marziali e orari donne",
+                hb1: "Massa e Cardio", hb2: "Kickboxing e Kung Fu", hb3: "MMA Adulti", hb4: "Orari Donne",
+                heroBtnStart: "Scegli l'abbonamento", heroBtnMore: "Scopri le attività",
+                aboutMainTitle: "Perché scegliere Captain Gym?",
+                aboutText1: "Non ci limitiamo a un abbonamento: un istruttore è con te durante l'allenamento per migliorare l'esecuzione e raggiungere i tuoi obiettivi in sicurezza.",
+                aboutText2: "Che il tuo obiettivo sia mettere massa o dimagrire, offriamo kickboxing e kung fu per tutte le età (ragazzi e ragazze), MMA per adulti e fasce dedicate alle donne in un ambiente pulito e rispettoso.",
+                feat1: "Assistenza in sala", feat2: "Ragazzi e ragazze • Tutte le età", feat3: "Spazio per le donne", feat4: "Pulizia e cortesia",
+                programsTitle: "Programmi e attività",
+                filterAll: "Tutti", filterGym: "Palestra e Fitness", filterCombat: "Arti marziali", filterLadies: "Orari donne",
+                prog1Title: "Palestra Massa e Cardio", prog1Tag: "Forza e Cardio", prog1Desc: "Attrezzature per massa muscolare e cardio con supporto costante dell'istruttore in sala.",
+                prog2Title: "Kickboxing e Kung Fu", prog2Tag: "Tutte le età • Ragazzi e ragazze", prog2Desc: "Percorsi di autodifesa, preparazione atletica e sicurezza per ogni età.",
+                prog3Title: "Arti Marziali Miste (MMA)", prog3Tag: "Per adulti", prog3Desc: "Allenamento completo su forza, resistenza e tecniche di combattimento con istruttori dedicati.",
+                prog4Title: "Fascia Riservata a Donne e Ragazze", prog4Tag: "Fitness • Aerobica • Zumba • Attrezzi", prog4Desc: "Orari dedicati alle donne con fitness, aerobica, zumba e attrezzi in un clima riservato.",
+                pricingTitle: "Abbonamenti", popularBadge: "Più richiesto",
+                perMonth1: "/ mese", perMonth2: "/ mese",
+                plan1Name: "Abbonamento Massa", p1f1: "Accesso in palestra tutto il mese", p1f2: "Uso completo attrezzi pesi e massa", p1f3: "Supporto dell'istruttore durante l'allenamento", p1f4: "Macchine cardio non incluse",
+                plan2Name: "Abbonamento Massa e Cardio", p2f1: "Accesso in palestra tutto il mese", p2f2: "Uso completo attrezzi pesi e massa", p2f3: "Include attrezzi cardio e dimagrimento", p2f4: "Supporto dell'istruttore durante l'allenamento",
+                plan3Name: "Arti Marziali e Orari Donne", plan3Price: 'Formule varie <span id="perQuarter3">/ per corso</span>',
+                p3f1: "Kickboxing e Kung Fu (Tutte le età • Ragazzi e ragazze)", p3f2: "Allenamento MMA per adulti", p3f3: "Donne: Fitness, Aerobica, Zumba e Attrezzi", p3f4: "Orari flessibili e istruttori qualificati",
+                btnPlan1: "Abbonati ora", btnPlan2: "Abbonati ora", btnPlan3: "Chiedi info e iscriviti",
+                galleryTitle: "Galleria della palestra", reviewsTitle: "Recensioni iscritti",
+                formQuestion: "Vuoi lasciare una recensione sulla <span>Palestra</span>?",
+                namePlaceholder: "Il tuo nome...", commentPlaceholder: "Scrivi la tua esperienza o opinione...", submitBtn: "Invia recensione",
+                contactTitle: "Contattaci ora e inizia",
+                hoursInfo: "Turni uomini, orari donne e corsi di arti marziali", cleanInfo: "Ambiente pulito e assistenza continua",
+                callText: "Chiama", waText: "WhatsApp",
+                footerText: 'Tutti i diritti riservati 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "Clicca sul nome dello sviluppatore per contattarlo"
+            },
+            tr: {
+                dir: "ltr",
+                splashTagline: "Güç • Disiplin • Süreklilik",
+                navAbout: "Hakkımızda", navPrograms: "Programlar", navPricing: "Paketler", navGallery: "Galeri", navReviews: "Yorumlar", navContact: "İletişim",
+                heroSubtitle: "En iyi versiyonuna giden yol — Hacim ve kardiyo, dövüş sporları ve kadınlara özel saatler",
+                hb1: "Hacim ve Kardiyo", hb2: "Kickboks ve Kung Fu", hb3: "Yetişkin MMA", hb4: "Kadınlara Özel Saatler",
+                heroBtnStart: "Paketini Seç", heroBtnMore: "Programları İncele",
+                aboutMainTitle: "Neden Captain Gym?",
+                aboutText1: "Sadece üyelik sunmuyoruz; antrenman sırasında formunu düzeltmen, seviyeni artırman ve hedefine güvenle ulaşman için koç yanındadır.",
+                aboutText2: "İster kas yapma ister yağ yakma hedefle; kız ve erkek tüm yaşlara kickboks ve kung fu, yetişkinlere MMA ve temiz, saygılı bir ortamda kadınlara özel seanslar sunuyoruz.",
+                feat1: "Antrenman Boyunca Koç Desteği", feat2: "Kız & Erkek • Tüm Yaşlar", feat3: "Kadınlara Özel Seanslar", feat4: "Temizlik ve Saygılı Ortam",
+                programsTitle: "Eğitim Programları ve Aktiviteler",
+                filterAll: "Tümü", filterGym: "Salon ve Fitness", filterCombat: "Dövüş Sporları", filterLadies: "Kadın Seansları",
+                prog1Title: "Hacim ve Kardiyo Salonu", prog1Tag: "Kas ve Kardiyo", prog1Desc: "Hacim, ağırlık ve kardiyo ekipmanlarıyla salonda sürekli antrenör takibi.",
+                prog2Title: "Kickboks ve Kung Fu", prog2Tag: "Tüm Yaşlar • Kız ve Erkek", prog2Desc: "Savunma, kondisyon ve özgüven için her yaşa uygun temel ve ileri eğitim.",
+                prog3Title: "Karma Dövüş Sanatları (MMA)", prog3Tag: "Yetişkinlere Özel", prog3Desc: "Uzman eğitmenler eşliğinde güç, dayanıklılık ve dövüş teknikleri eğitimi.",
+                prog4Title: "Kadın ve Kızlara Özel Seans", prog4Tag: "Fitness • Aerobik • Zumba • Aletler", prog4Desc: "Kadınlara özel saatlerde fitness, aerobik, zumba ve salon aletleri imkanı.",
+                pricingTitle: "Üyelik Paketleri", popularBadge: "En Çok Tercih Edilen",
+                perMonth1: "/ aylık", perMonth2: "/ aylık",
+                plan1Name: "Hacim Paketi", p1f1: "Ay boyunca salona giriş", p1f2: "Ağırlık ve hacim aletlerinin kullanımı", p1f3: "Antrenman sırasında koç desteği", p1f4: "Kardiyo aletleri dahil değildir",
+                plan2Name: "Hacim ve Kardiyo Paketi", p2f1: "Ay boyunca salona giriş", p2f2: "Ağırlık ve hacim aletlerinin kullanımı", p2f3: "Kardiyo ve yağ yakım aletleri dahil", p2f4: "Antrenman sırasında koç desteği",
+                plan3Name: "Dövüş Sporları ve Kadın Seansları", plan3Price: 'Çeşitli Paketler <span id="perQuarter3">/ programa göre</span>',
+                p3f1: "Kickboks ve Kung Fu (Tüm yaşlar • Kız & Erkek)", p3f2: "Yetişkinler için MMA eğitimi", p3f3: "Kadın Seansı: Fitness, Aerobik, Zumba ve Aletler", p3f4: "Esnek saatler ve uzman eğitmenler",
+                btnPlan1: "Hemen Katıl", btnPlan2: "Hemen Katıl", btnPlan3: "Bilgi Al ve Katıl",
+                galleryTitle: "Salondan Fotoğraflar", reviewsTitle: "Üye Yorumları",
+                formQuestion: "<span>Salon</span> hakkında yorum bırakmak ister misin?",
+                namePlaceholder: "Adınız...", commentPlaceholder: "Deneyiminizi veya görüşünüzü yazın...", submitBtn: "Yorumu Gönder",
+                contactTitle: "Hemen İletişime Geç ve Başla",
+                hoursInfo: "Erkek seansları, kadınlara özel saatler ve dövüş dersleri", cleanInfo: "Temiz ortam ve sürekli takip",
+                callText: "Ara", waText: "WhatsApp",
+                footerText: 'Tüm hakları saklıdır 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "İletişim için geliştirici adına tıklayın"
+            },
+            ru: {
+                dir: "ltr",
+                splashTagline: "Сила • Дисциплина • Результат",
+                navAbout: "О нас", navPrograms: "Программы", navPricing: "Тарифы", navGallery: "Галерея", navReviews: "Отзывы", navContact: "Контакты",
+                heroSubtitle: "Путь к лучшей версии себя — зал, единоборства и женские часы",
+                hb1: "Масса и кардио", hb2: "Кикбоксинг и кунг-фу", hb3: "MMA для взрослых", hb4: "Женские часы",
+                heroBtnStart: "Выбрать тариф", heroBtnMore: "Смотреть программы",
+                aboutMainTitle: "Почему выбирают Captain Gym?",
+                aboutText1: "Мы даём не просто абонемент: тренер находится рядом во время тренировки, помогает отточить технику и безопасно идти к цели.",
+                aboutText2: "Для набора массы или похудения мы проводим занятия по кикбоксингу и кунг-фу для всех возрастов (мальчики и девочки), MMA для взрослых и отдельные тренировки для женщин в чистой и уважительной атмосфере.",
+                feat1: "Поддержка тренера в зале", feat2: "Для всех возрастов", feat3: "Время для женщин", feat4: "Чистота и уважение",
+                programsTitle: "Программы тренировок",
+                filterAll: "Все", filterGym: "Зал и фитнес", filterCombat: "Единоборства", filterLadies: "Женские часы",
+                prog1Title: "Зал: масса и кардио", prog1Tag: "Мышцы и кардио", prog1Desc: "Тренажёры для набора массы и кардиозона с постоянным сопровождением тренера.",
+                prog2Title: "Кикбоксинг и кунг-фу", prog2Tag: "Все возрасты • Мальчики и девочки", prog2Desc: "Тренировки по самообороне, выносливости и уверенности для разных возрастов.",
+                prog3Title: "Смешанные единоборства (MMA)", prog3Tag: "Для взрослых", prog3Desc: "Комплексная подготовка по силе, выносливости и боевым техникам под руководством тренеров.",
+                prog4Title: "Часы для женщин и девушек", prog4Tag: "Фитнес • Аэробика • Зумба • Тренажёры", prog4Desc: "Отдельные сеансы для женщин с фитнесом, аэробикой, зумбой и тренажёрами.",
+                pricingTitle: "Абонементы и цены", popularBadge: "Популярный",
+                perMonth1: "/ мес", perMonth2: "/ мес",
+                plan1Name: "Тариф «Масса»", p1f1: "Посещение зала весь месяц", p1f2: "Силовые и базовые тренажёры", p1f3: "Сопровождение тренера на тренировке", p1f4: "Кардиотренажёры не входят",
+                plan2Name: "Тариф «Масса + Кардио»", p2f1: "Посещение зала весь месяц", p2f2: "Силовые тренажёры для набора массы", p2f3: "Доступ к кардиотренажёрам и жиросжиганию", p2f4: "Сопровождение тренера на тренировке",
+                plan3Name: "Единоборства и женские часы", plan3Price: 'Разные тарифы <span id="perQuarter3">/ по программе</span>',
+                p3f1: "Кикбоксинг и кунг-фу (Все возрасты)", p3f2: "Тренировки MMA для взрослых", p3f3: "Женские часы: фитнес, аэробика, зумба, тренажёры", p3f4: "Гибкое расписание и опытные тренеры",
+                btnPlan1: "Оформить", btnPlan2: "Оформить", btnPlan3: "Узнать и записаться",
+                galleryTitle: "Фотографии зала", reviewsTitle: "Отзывы клиентов",
+                formQuestion: "Хотите оставить отзыв о <span>зале</span>?",
+                namePlaceholder: "Ваше имя...", commentPlaceholder: "Напишите ваш отзыв или впечатление...", submitBtn: "Отправить отзыв",
+                contactTitle: "Свяжитесь с нами и начните сейчас",
+                hoursInfo: "Мужские смены, женские часы и секции единоборств", cleanInfo: "Чистота и внимание к каждому",
+                callText: "Позвонить", waText: "WhatsApp",
+                footerText: 'Все права защищены 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "Нажмите на имя разработчика для связи"
+            },
+            ja: {
+                dir: "ltr",
+                splashTagline: "力 • 規律 • 継続",
+                navAbout: "特徴", navPrograms: "プログラム", navPricing: "料金プラン", navGallery: "ギャラリー", navReviews: "口コミ", navContact: "お問い合わせ",
+                heroSubtitle: "最高の自分を目指す場所 — 筋力・有酸素、格闘技、女性専用タイム",
+                hb1: "増量＆有酸素", hb2: "キックボクシング＆カンフー", hb3: "大人向け MMA", hb4: "女性専用タイム",
+                heroBtnStart: "プランを選ぶ", heroBtnMore: "プログラムを見る",
+                aboutMainTitle: "Captain Gym が選ばれる理由",
+                aboutText1: "ただ通うだけでなく、トレーニング中にコーチが寄り添い、フォーム改善やレベルアップ、目標達成を丁寧にサポートします。",
+                aboutText2: "筋力アップも脂肪燃焼も、男女全年齢向けのキックボクシング・カンフー、大人向け MMA、そして清潔で礼儀正しい環境での女性専用タイムをご用意しています。",
+                feat1: "フロアでのコーチ指導", feat2: "男女・全年齢対応", feat3: "女性専用タイムあり", feat4: "清潔で快適な空間",
+                programsTitle: "トレーニングプログラム",
+                filterAll: "すべて", filterGym: "ジム＆フィットネス", filterCombat: "格闘技", filterLadies: "女性専用",
+                prog1Title: "増量＆有酸素ジム", prog1Tag: "筋力＆カーディオ", prog1Desc: "ウエイトマシンと有酸素マシンを完備し、コーチがトレーニングをサポートします。",
+                prog2Title: "キックボクシング＆カンフー", prog2Tag: "全年齢 • 男女対象", prog2Desc: "護身術、体力向上、自信につながる基礎から応用までのトレーニングです。",
+                prog3Title: "総合格闘技 (MMA)", prog3Tag: "大人向け", prog3Desc: "専門コーチのもと、筋力・スタミナ・格闘技術を総合的に鍛えます。",
+                prog4Title: "女性・女子向け専用タイム", prog4Tag: "フィットネス • エアロビクス • ズンバ • マシン", prog4Desc: "フィットネス、エアロビクス、ズンバ、マシンを安心して楽しめる女性専用枠です。",
+                pricingTitle: "料金プラン", popularBadge: "一番人気",
+                perMonth1: "/ 月", perMonth2: "/ 月",
+                plan1Name: "増量プラン", p1f1: "1ヶ月間ジム利用可能", p1f2: "ウエイト・増量マシン利用", p1f3: "トレーニング中のコーチ指導", p1f4: "有酸素マシンは対象外",
+                plan2Name: "増量＆有酸素プラン", p2f1: "1ヶ月間ジム利用可能", p2f2: "ウエイト・増量マシン利用", p2f3: "有酸素・脂肪燃焼マシン利用可", p2f4: "トレーニング中のコーチ指導",
+                plan3Name: "格闘技＆女性専用プラン", plan3Price: '各種プラン <span id="perQuarter3">/ プログラム別</span>',
+                p3f1: "キックボクシング＆カンフー（全年齢・男女）", p3f2: "大人向け MMA トレーニング", p3f3: "女性枠：フィットネス・エアロビクス・ズンバ・マシン", p3f4: "柔軟なスケジュールと専門コーチ",
+                btnPlan1: "申し込む", btnPlan2: "申し込む", btnPlan3: "相談・申し込み",
+                galleryTitle: "ジム内ギャラリー", reviewsTitle: "お客様の声",
+                formQuestion: "<span>ジム</span>の感想を残しますか？",
+                namePlaceholder: "お名前を入力...", commentPlaceholder: "感想や体験談を入力してください...", submitBtn: "コメントを送信",
+                contactTitle: "今すぐお問い合わせして始めよう",
+                hoursInfo: "男性枠・女性専用枠・格闘技クラスあり", cleanInfo: "清潔な環境と継続サポート",
+                callText: "電話する", waText: "WhatsApp",
+                footerText: 'All Rights Reserved 2026 &copy; | Developed By <a href="https://baselmohamed.vercel.app" target="_blank">Basel</a>',
+                footerSubtext: "開発者名をクリックしてお問い合わせ"
+            }
+        };
+
+        function changeLanguage(langCode) {
+            currentLang = translations[langCode] ? langCode : 'ar';
+            const t = translations[currentLang];
+            const html = document.documentElement;
+
+            html.setAttribute('lang', currentLang);
+            html.setAttribute('dir', t.dir);
+            document.getElementById('langSelect').value = currentLang;
+
+            const setText = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val;
+            };
+            const setHTML = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = val;
+            };
+
+            setText('splashTagline', t.splashTagline);
+            setText('navAbout', t.navAbout);
+            setText('navPrograms', t.navPrograms);
+            setText('navPricing', t.navPricing);
+            setText('navGallery', t.navGallery);
+            setText('navReviews', t.navReviews);
+            setText('navContact', t.navContact);
+
+            setText('heroSubtitle', t.heroSubtitle);
+            setText('hb1', t.hb1);
+            setText('hb2', t.hb2);
+            setText('hb3', t.hb3);
+            setText('hb4', t.hb4);
+            setText('heroBtnStart', t.heroBtnStart);
+            setText('heroBtnMore', t.heroBtnMore);
+
+            setText('aboutMainTitle', t.aboutMainTitle);
+            setText('aboutText1', t.aboutText1);
+            setText('aboutText2', t.aboutText2);
+            setText('feat1', t.feat1);
+            setText('feat2', t.feat2);
+            setText('feat3', t.feat3);
+            setText('feat4', t.feat4);
+
+            setText('programsTitle', t.programsTitle);
+            setText('filterAll', t.filterAll);
+            setText('filterGym', t.filterGym);
+            setText('filterCombat', t.filterCombat);
+            setText('filterLadies', t.filterLadies);
+
+            setText('prog1Title', t.prog1Title);
+            setText('prog1Tag', t.prog1Tag);
+            setText('prog1Desc', t.prog1Desc);
+            setText('prog2Title', t.prog2Title);
+            setText('prog2Tag', t.prog2Tag);
+            setText('prog2Desc', t.prog2Desc);
+            setText('prog3Title', t.prog3Title);
+            setText('prog3Tag', t.prog3Tag);
+            setText('prog3Desc', t.prog3Desc);
+            setText('prog4Title', t.prog4Title);
+            setText('prog4Tag', t.prog4Tag);
+            setText('prog4Desc', t.prog4Desc);
+
+            setText('pricingTitle', t.pricingTitle);
+            setText('popularBadge', t.popularBadge);
+            setText('perMonth1', t.perMonth1);
+            setText('perMonth2', t.perMonth2);
+
+            setText('plan1Name', t.plan1Name);
+            setText('p1f1', t.p1f1);
+            setText('p1f2', t.p1f2);
+            setText('p1f3', t.p1f3);
+            setText('p1f4', t.p1f4);
+
+            setText('plan2Name', t.plan2Name);
+            setText('p2f1', t.p2f1);
+            setText('p2f2', t.p2f2);
+            setText('p2f3', t.p2f3);
+            setText('p2f4', t.p2f4);
+
+            setText('plan3Name', t.plan3Name);
+            setHTML('plan3Price', t.plan3Price);
+            setText('p3f1', t.p3f1);
+            setText('p3f2', t.p3f2);
+            setText('p3f3', t.p3f3);
+            setText('p3f4', t.p3f4);
+
+            setText('btnPlan1', t.btnPlan1);
+            setText('btnPlan2', t.btnPlan2);
+            setText('btnPlan3', t.btnPlan3);
+
+            setText('galleryTitle', t.galleryTitle);
+            setText('reviewsTitle', t.reviewsTitle);
+            setHTML('formQuestion', t.formQuestion);
+
+            document.getElementById('reviewerName').placeholder = t.namePlaceholder;
+            document.getElementById('reviewerComment').placeholder = t.commentPlaceholder;
+            setText('submitReviewBtn', t.submitBtn);
+
+            setText('contactTitle', t.contactTitle);
+            setText('hoursInfo', t.hoursInfo);
+            setText('cleanInfo', t.cleanInfo);
+            setText('callText', t.callText);
+            setText('waText', t.waText);
+
+            setHTML('footerText', t.footerText);
+            setText('footerSubtext', t.footerSubtext);
+        }
+    </script>
+</body>
+</html>
